@@ -1,0 +1,16 @@
+{
+    "resolution": {
+        "width": 1920,
+        "height": 1080
+    },
+    "auto_fullscreen": true,
+    "audio": {
+        "master_volume": 70,
+        "game_music": 65,
+        "menu_music": 60,
+        "sound_effects": 90
+    },
+    "video": {
+        "vsync": true
+    }
+}
