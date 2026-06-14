@@ -1,1 +1,2 @@
-py main.py
+py start-game.py
+pause

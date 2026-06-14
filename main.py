@@ -11,7 +11,7 @@ import json
 from panda3d.core import loadPrcFileData
 
 from menus import OptionsMenu
-from achievements import AchievementsMenu   # 👈 NEW IMPORT
+from achievements import AchievementsMenu   
 
 try:
     with open('sources/options.json', 'r') as file:
@@ -33,15 +33,15 @@ class MyApp(ShowBase):
         super().__init__()
 
         self.game_config = data
-
         self.apply_startup_settings()
-
         self.setFrameRateMeter(True)
 
+        # Create Background but keep it HIDDEN until intro finishes
         self.background = OnscreenImage(
             image='sources/textures/menu_background_1024x768.png',
             parent=render2dp
         )
+        self.background.hide()
 
         base.cam2dp.node().getDisplayRegion(0).setSort(-20)
 
@@ -64,12 +64,13 @@ class MyApp(ShowBase):
             self.silkscreen.set_pixels_per_unit(200)
             self.silkscreen.setMinfilter(Texture.FTLinear)
 
-        # MAIN MENU
+        # MAIN MENU FRAME (Created Hidden)
         self.main_menu_frame = DirectFrame(relief=None)
+        self.main_menu_frame.hide()
 
         # MENUS
         self.options_menu = OptionsMenu(self)
-        self.achievements_menu = AchievementsMenu(self)   # 👈 NEW
+        self.achievements_menu = AchievementsMenu(self)   
 
         # TITLE
         OnscreenText(
@@ -98,7 +99,7 @@ class MyApp(ShowBase):
             text="Achievements",
             scale=self.normal_scale,
             pos=(0, 0, -0.2),
-            command=self.open_achievements,   # 👈 now works
+            command=self.open_achievements,   
             text_font=self.silkscreen,
             pad=(0.5, 0.3),
             relief=None,
@@ -135,6 +136,18 @@ class MyApp(ShowBase):
         self.setup_button_hover(self.fullscreen_btn)
         self.setup_button_hover(self.achievement_btn)
         self.setup_button_hover(self.settings_button)
+
+    # ---------------- REVEAL MAIN MENU SEQUENCE ----------------
+
+    def show_main_menu(self):
+        # Clear out anything left behind by the intro environment rendering
+        self.camera.setPos(0, -22, 2)
+        self.camera.lookAt(0, 0, 0)
+        self.setBackgroundColor(0, 0, 0) # Fallback window background color
+        
+        # Unhide menu layout and background asset seamlessly
+        self.background.show()
+        self.main_menu_frame.show()
 
     # ---------------- SETTINGS ----------------
 
@@ -224,9 +237,5 @@ class MyApp(ShowBase):
         self.options_menu.show()
 
     def open_achievements(self):
-        self.main_menu_frame.hide()                # 👈 hide main menu
-        self.achievements_menu.show()              # 👈 show achievements
-
-
-app = MyApp()
-app.run()
+        self.main_menu_frame.hide()                
+        self.achievements_menu.show()              
